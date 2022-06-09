@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load filter_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    {% block mainbody %}
+    <div class="container">
+        <table class="col-lg">
+            <thead class="border">
+                <tr>
+                    <th>S.No.</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody class="border">
+                {% for product in products %}
+                <tr>
+                    <th>{{forloop.counter}}</th>
+                    {%for pm in product.product_image.all%}
+                    <th><img src="{{pm.image.url}}" height="50px"></th>
+                    {%endfor%}
+                    <th>{{product.name}}</th>
+                    <th>{{product.price}}</th>
+                    <th>{{product|quantity:request.session.cart}}</th>
+                    <th>{{product|total:request.session.cart}}</th>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5" class="display-5 text-right">All Total</th>
+                    <th colspan="5" class="display-5">{{products|all_total:request.session.cart}}</th>
+                </tr>
+                <tr>
+                    <th colspan="5" class="display-5">
+                        <div class="display-5 text-right">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#exampleModal">
+                                Checkout
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body text-left">
+                                            <form action="{% url 'checkout' %} " method="POST">
+                                                {% csrf_token %}
+                                                <div class="form-group">
+                                                    <label for="address">Address</label>
+                                                    <input type="text" class="form-control" name="address"
+                                                        placeholder="Address">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Contact">Contact</label>
+                                                    <input type="contact" class="form-control" name="contact"
+                                                        placeholder="Contact">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Coupon">Coupon</label>
+                                                    <input type="text" class="form-control" name="coupon"
+                                                        placeholder="Coupon">
+                                                </div>
+                                                <button type="submit" class="btn btn-primary">Place Order</button>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </tfoot>
+
+        </table>
+    </div>
+    {% endblock %}
+</body>
+
+</html>

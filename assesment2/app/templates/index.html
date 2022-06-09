@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load filter_tags %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% block mainbody %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-3 border">
+                <!-- <p>fdgfdgfdgdgdgfd</p> -->
+                {%for pm in product.product_image.all%}
+<img class="card-img-top" src="{{pm.image.}" height="400px">
+                {%endfor%}
+                
+                <div class="card" style="width: 18rem;">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><a href="/" style="color: black;">All</a></li>
+                        {% for category in categories %}
+                        <li class="list-group-item"><a href="/?category={{category.id}}" style="color: black;">{{category.name}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="col-lg-9 border">
+                <div class="row">
+                    {% for product in products %}
+                    <div class="col-4">
+                        <div class="card mt-4" style="width: 18rem;">
+                            {%for pm in product.product_image.all%}
+                            <img class="card-img-top" src="{{pm.image.url}}" height="400px">
+                            {%endfor%}
+                            <div class="card-body">
+                                <h5 class="card-title">{{product.name}}</h5>
+                                <h5 class="card-title">{{product.price}}</h5>
+                                <h5 class="card-title">{{product.discount}}</h5>
+                                <p class="card-text">{{product.description}}</p>
+                            </div>
+                            {{product|is_in_cart:request.session.cart}}
+                            <div class="card-footer p-0 m-0">
+                                {% if product|is_in_cart:request.session.cart %}
+                                <div class="row no-gutters">
+                                <form action=" " method="POST" class="col-2">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_remove" value="remove" >
+                                    <input type="number" name="product_id" value="{{product.id}}" hidden>
+                                    <button href="#" class="btn btn-primary btn-block btn-lg"> - </button>
+                                </form>
+                                <div class="col-8">
+                                    <h1>{{product|cart_quantity:request.session.cart}}in cart</h1>
+                                </div>
+                                <form action=" " method="POST" class="col-2">
+                                    {% csrf_token %}
+                                    <input type="number" name="product_id" value="{{product.id}}" hidden>
+                                    <button href="#" class="btn btn-primary btn-block btn-lg"> + </button>
+                                </form>
+                                </div>
+                                {% else %}
+                                <form action=" " method="POST">
+                                    {% csrf_token %}
+                                    <input type="number" name="product_id" value="{{product.id}}" hidden>
+                                    <button href="#" class="btn btn-primary btn-block btn-lg">Add to Cart</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+    {% endblock %}
+</body>
+
+</html>
